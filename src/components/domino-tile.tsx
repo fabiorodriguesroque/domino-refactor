@@ -8,7 +8,7 @@ const ImageSide = ({ style }: { style: React.CSSProperties }) => (
 
 const TextSide = ({ value }: { value: string }) => (
   <div className="flex flex-1 items-center justify-center">
-    <span className="text-2xl font-bold text-black italic">{value}</span>
+    <span className="text-xl font-semibold text-black">{value}</span>
   </div>
 )
 
@@ -20,16 +20,17 @@ export default function DominoTile({ tile }: { tile: Tile }) {
   const { getPublicUrl } = useAws()
 
   const hasValue = Boolean(tile.value)
-  const imageOnLeft = !tile.mirrorImage
+  const hasRightImage = !hasValue && Boolean(tile.rightImage)
 
-  const imageStyle = {
+  const leftImageStyle: React.CSSProperties = {
     backgroundImage: `url(${getPublicUrl(tile.src)})`,
     backgroundSize: '85%',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: tile.backgroundImagePosition || 'center',
+    transform: tile.mirrorImage ? 'scaleX(-1)' : undefined,
   }
 
-  const rightImageStyle = tile.rightImage
+  const rightImageStyle: React.CSSProperties = tile.rightImage
     ? {
         backgroundImage: `url(${getPublicUrl(tile.rightImage)})`,
         backgroundSize: '90%',
@@ -45,29 +46,15 @@ export default function DominoTile({ tile }: { tile: Tile }) {
 
       {/* Main tile */}
       <div className="relative flex h-full w-full items-stretch overflow-hidden rounded-2xl border-[3px] border-white bg-[#FFFBF3]">
+        {/* Left side - always the main image */}
+        <ImageSide style={leftImageStyle} />
+        <Separator />
+        {/* Right side - text value or secondary image */}
         {hasValue ? (
-          <>
-            {imageOnLeft ? (
-              <>
-                <ImageSide style={imageStyle} />
-                <Separator />
-                <TextSide value={tile.value!} />
-              </>
-            ) : (
-              <>
-                <TextSide value={tile.value!} />
-                <Separator />
-                <ImageSide style={imageStyle} />
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            <ImageSide style={imageStyle} />
-            <Separator />
-            <ImageSide style={rightImageStyle} />
-          </>
-        )}
+          <TextSide value={tile.value!} />
+        ) : hasRightImage ? (
+          <ImageSide style={rightImageStyle} />
+        ) : null}
       </div>
     </div>
   )

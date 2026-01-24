@@ -9,7 +9,7 @@ export default function GamePage() {
 
   return (
     <div
-      className="h-screen w-screen"
+      className="font-poppins h-screen w-screen"
       style={{
         backgroundImage: `url(${getPublicUrl(images.ui.background)})`,
         backgroundSize: 'cover',
