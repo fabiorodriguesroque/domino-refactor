@@ -2,6 +2,7 @@
 import { images } from '@repo/domino/constants/images'
 import { useAws } from '@repo/core/hooks'
 import TopBar from '@repo/ui/components/games/top-bar'
+import GameZone from '@repo/domino/components/game-zone'
 
 export default function GamePage() {
   const { getPublicUrl } = useAws()
@@ -31,7 +32,7 @@ export default function GamePage() {
           </div>
         </div>
         <div className="flex h-full flex-1 items-center justify-center">
-          Game Zone
+          <GameZone />
         </div>
       </div>
     </div>
