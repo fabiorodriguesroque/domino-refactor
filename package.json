@@ -1,40 +1,43 @@
 {
-    "name": "@repo/example-game",
+    "name": "@repo/domino",
     "version": "0.0.1",
     "sideEffects": [
-      "**/*.css"
+        "**/*.css"
     ],
     "files": [
-      "dist"
+        "dist"
     ],
     "exports": {
-      "./styles.css": "./dist/index.css",
-      "./*": "./dist/*.js"
+        "./styles.css": "./dist/index.css",
+        "./*": "./dist/*.js"
     },
     "license": "MIT",
     "scripts": {
-      "build:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css",
-      "build:components": "tsc",
-      "check-types": "tsc --noEmit",
-      "dev:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
-      "dev:components": "tsc --watch",
-      "lint": "eslint src --max-warnings 0"
+        "build:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css",
+        "build:components": "tsc",
+        "check-types": "tsc --noEmit",
+        "dev:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
+        "dev:components": "tsc --watch",
+        "lint": "eslint src --max-warnings 0"
     },
     "peerDependencies": {
-      "react": "^19",
-      "react-dom": "^19",
-      "next": "^16.0.1",
-      "@repo/core": "*",
-      "@repo/ui": "*"
+        "@repo/core": "*",
+        "@repo/ui": "*",
+        "next": "^16.0.1",
+        "react": "^19",
+        "react-dom": "^19"
     },
     "devDependencies": {
-      "@repo/eslint-config": "*",
-      "@repo/tailwindcss-config": "*",
-      "@repo/typescript-config": "*",
-      "@tailwindcss/cli": "^4.1.5",
-      "@types/react": "^19.1.0",
-      "eslint": "^9.38.0",
-      "tailwindcss": "^4.1.5",
-      "typescript": "5.9.2"
+        "@repo/eslint-config": "*",
+        "@repo/tailwindcss-config": "*",
+        "@repo/typescript-config": "*",
+        "@tailwindcss/cli": "^4.1.5",
+        "@types/react": "^19.1.0",
+        "eslint": "^9.38.0",
+        "tailwindcss": "^4.1.5",
+        "typescript": "5.9.2"
+    },
+    "dependencies": {
+        "@tailwindcss/postcss": "^4.1.18"
     }
-  }
+}

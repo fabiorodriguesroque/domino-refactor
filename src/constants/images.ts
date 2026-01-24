@@ -1,8 +1,7 @@
-const path = '/example-game/images'
+const basePath = 'domino/images'
 
-export const mountain = {
-  src: `${path}/mountains.avif`,
-  alt: 'Mountains',
-  width: 400,
-  height: 400,
+export const images = {
+  ui: {
+    background: '/ui/background.webp',
+  },
 }
