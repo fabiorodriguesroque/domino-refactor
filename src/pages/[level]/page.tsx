@@ -18,7 +18,7 @@ export default function GamePage() {
     >
       <div className="flex flex-wrap gap-2">
         {tiles.map((tile) => (
-          <DominoTile key={tile.id} />
+          <DominoTile key={tile.id} tile={tile} />
         ))}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { images } from './images'
 
-export default [
+const tiles: Tile[] = [
   {
     id: 1,
     src: images.tiles.seta,
@@ -238,3 +238,5 @@ export default [
     mirrorImage: false,
   },
 ]
+
+export default tiles
