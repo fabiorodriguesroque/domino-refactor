@@ -42,5 +42,7 @@ export const images = {
   },
   ui: {
     background: `${basePath}/ui/background.webp`,
+    cloudBack: `${basePath}/ui/cloud-back.png`,
+    cloudFront: `${basePath}/ui/cloud-front.png`,
   },
 }

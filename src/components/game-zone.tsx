@@ -1,12 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import DominoTile from './domino-tile'
 import Draggable from '@repo/core/components/Draggable'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import Droppable from '@repo/core/components/Droppable'
 import { useParams } from 'next/navigation'
 import { useGameTiles } from '../hooks/useGameTiles'
+import { images } from '../constants/images'
+import { useAws } from '@repo/core/hooks'
+
+const MAX_VISIBLE_TILES = 4
 
 export default function GameZone() {
   const params = useParams<{ level: string }>()
@@ -21,9 +26,18 @@ export default function GameZone() {
     addTileToMain,
   } = useGameTiles(levelId)
 
+  const { getPublicUrl } = useAws()
+
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
 
   if (mainTiles.length === 0) return null
+
+  // Show first 2 and last 2 tiles when there are 5+, with cloud loop effect
+  // Example: [3,4,5,6,7] -> show [3,4] and [6,7], hide [5] under cloud
+  const hasLoopEffect = mainTiles.length > MAX_VISIBLE_TILES
+  const leftTiles = hasLoopEffect ? mainTiles.slice(0, 2) : []
+  const rightTiles = hasLoopEffect ? mainTiles.slice(-2) : []
+  const visibleTiles = hasLoopEffect ? mainTiles : mainTiles
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over) {
@@ -54,26 +68,84 @@ export default function GameZone() {
       <DndContext onDragEnd={handleDragEnd} id="dnd-domino">
         <div className="flex flex-col items-center gap-16">
           {/* Main tiles with droppable zones on both sides */}
-          <div className="flex items-center gap-4">
-            <Droppable id={leftDroppableId.toString()}>
-              <DominoTile status="droppable" />
-            </Droppable>
-            {mainTiles.map((tile, index) => {
-              const isMiddle =
-                mainTiles.length >= 4 &&
-                index > 0 &&
-                index < mainTiles.length - 1
-              return (
-                <DominoTile
-                  key={tile.id}
-                  tile={tile}
-                  size={isMiddle ? 'small' : 'normal'}
-                />
-              )
-            })}
-            <Droppable id={rightDroppableId.toString()}>
-              <DominoTile status="droppable" />
-            </Droppable>
+          <div className="relative flex items-center gap-4">
+            <div className="z-5">
+              <Droppable id={leftDroppableId.toString()}>
+                <DominoTile status="droppable" />
+              </Droppable>
+            </div>
+
+            {hasLoopEffect ? (
+              <>
+                {/* Left 2 tiles */}
+                {leftTiles.map((tile, index) => (
+                  <div key={tile.id} className="z-5">
+                    <DominoTile
+                      tile={tile}
+                      size={index === 1 ? 'small' : 'normal'}
+                    />
+                  </div>
+                ))}
+
+                {/* Right 2 tiles */}
+                {rightTiles.map((tile, index) => (
+                  <div key={tile.id} className="z-5">
+                    <DominoTile
+                      tile={tile}
+                      size={index === 0 ? 'small' : 'normal'}
+                    />
+                  </div>
+                ))}
+              </>
+            ) : (
+              /* All tiles when no loop effect */
+              visibleTiles.map((tile, index) => {
+                const isMiddle =
+                  visibleTiles.length >= 4 &&
+                  index > 0 &&
+                  index < visibleTiles.length - 1
+                return (
+                  <div key={tile.id} className="z-5">
+                    <DominoTile
+                      tile={tile}
+                      size={isMiddle ? 'small' : 'normal'}
+                    />
+                  </div>
+                )
+              })
+            )}
+
+            {/* Cloud loop effect overlay - positioned absolutely over the row */}
+            {hasLoopEffect && (
+              <>
+                {/* Back cloud (behind tiles) */}
+                <div className="pointer-events-none absolute top-1/2 left-1/2 z-0 -translate-x-1/2 -translate-y-1/2">
+                  <Image
+                    src={getPublicUrl(images.ui.cloudBack)}
+                    alt=""
+                    width={400}
+                    height={400}
+                    className="object-contain"
+                  />
+                </div>
+                {/* Front cloud (in front of tiles) */}
+                <div className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+                  <Image
+                    src={getPublicUrl(images.ui.cloudFront)}
+                    alt=""
+                    width={350}
+                    height={350}
+                    className="object-contain"
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="z-5">
+              <Droppable id={rightDroppableId.toString()}>
+                <DominoTile status="droppable" />
+              </Droppable>
+            </div>
           </div>
 
           {/* 4 tiles below in a 2x2 grid */}
