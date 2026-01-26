@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import DominoTile from './domino-tile'
 import Draggable from '@repo/core/components/Draggable'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
@@ -13,6 +14,8 @@ export default function GameZone() {
   const { mainTiles, bottomTiles, leftDroppableId, rightDroppableId } =
     useGameTiles(levelId)
 
+  const [shakingTileId, setShakingTileId] = useState<string | null>(null)
+
   if (mainTiles.length === 0) return null
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -21,7 +24,7 @@ export default function GameZone() {
       if (isCorrect) {
         handleCorrectDragEnd()
       } else {
-        handleIncorrectDragEnd()
+        handleIncorrectDragEnd(event.active.id.toString())
       }
     }
   }
@@ -30,8 +33,9 @@ export default function GameZone() {
     console.log('Correct')
   }
 
-  const handleIncorrectDragEnd = () => {
-    console.log('Incorrect')
+  const handleIncorrectDragEnd = (tileId: string) => {
+    setShakingTileId(tileId)
+    setTimeout(() => setShakingTileId(null), 500)
   }
 
   return (
@@ -55,7 +59,10 @@ export default function GameZone() {
           <div className="grid grid-cols-2 gap-12">
             {bottomTiles.map((tile) => (
               <Draggable key={tile.id} id={tile.id.toString()}>
-                <DominoTile key={tile.id} tile={tile} />
+                <DominoTile
+                  tile={tile}
+                  isShaking={shakingTileId === tile.id.toString()}
+                />
               </Draggable>
             ))}
           </div>

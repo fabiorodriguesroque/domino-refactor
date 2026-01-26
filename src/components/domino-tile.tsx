@@ -1,10 +1,11 @@
 'use client'
 
+import clsx from 'clsx'
 import { useAws } from '@repo/core/hooks'
 
 type DominoTileProps =
-  | { tile: Tile; status?: 'normal' }
-  | { tile?: Tile; status: 'droppable' }
+  | { tile: Tile; status?: 'normal'; isShaking?: boolean }
+  | { tile?: Tile; status: 'droppable'; isShaking?: never }
 
 const ImageSide = ({ style }: { style: React.CSSProperties }) => (
   <div className="h-full flex-1" style={style} />
@@ -35,7 +36,7 @@ export default function DominoTile(props: DominoTileProps) {
     return <DroppableTile />
   }
 
-  const { tile } = props
+  const { tile, isShaking } = props
   const hasValue = Boolean(tile.value)
   const hasRightImage = !hasValue && Boolean(tile.rightImage)
 
@@ -57,7 +58,12 @@ export default function DominoTile(props: DominoTileProps) {
     : {}
 
   return (
-    <div className="relative h-[80px] w-[200px]">
+    <div
+      className={clsx(
+        'relative h-[80px] w-[200px]',
+        isShaking && 'animate-shake',
+      )}
+    >
       {/* Shadow layer */}
       <div className="absolute inset-0 translate-x-1 translate-y-1 rounded-2xl bg-[#CAC9B3]" />
 
