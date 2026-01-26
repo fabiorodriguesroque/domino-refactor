@@ -103,7 +103,7 @@ export default function GameZone() {
       >
         <div className="flex flex-col items-center gap-16">
           {/* Main tiles with droppable zones on both sides */}
-          <div className="relative flex items-center gap-4">
+          <div className="relative flex items-center gap-2">
             <div className="z-5">
               <Droppable id={leftDroppableId.toString()}>
                 <DominoTile status="droppable" />
