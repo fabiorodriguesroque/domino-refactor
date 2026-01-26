@@ -19,11 +19,19 @@ export default function GameZone() {
     if (event.over) {
       const isCorrect = event.active.id === event.over.id
       if (isCorrect) {
-        console.log('Correct')
+        handleCorrectDragEnd()
       } else {
-        console.log('Incorrect')
+        handleIncorrectDragEnd()
       }
     }
+  }
+
+  const handleCorrectDragEnd = () => {
+    console.log('Correct')
+  }
+
+  const handleIncorrectDragEnd = () => {
+    console.log('Incorrect')
   }
 
   return (
