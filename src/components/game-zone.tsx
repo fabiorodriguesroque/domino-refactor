@@ -104,7 +104,7 @@ export default function GameZone() {
         <div className="flex flex-col items-center gap-16">
           {/* Main tiles with droppable zones on both sides */}
           <div className="relative flex items-center gap-2">
-            <div className="z-5">
+            <div className="z-5 transition-all duration-300 ease-out">
               <Droppable id={leftDroppableId.toString()}>
                 <DominoTile status="droppable" />
               </Droppable>
@@ -114,7 +114,10 @@ export default function GameZone() {
               <>
                 {/* Left 2 tiles */}
                 {leftTiles.map((tile, index) => (
-                  <div key={tile.id} className="z-5">
+                  <div
+                    key={tile.id}
+                    className="z-5 transition-all duration-500 ease-out"
+                  >
                     <DominoTile
                       tile={tile}
                       size={index === 1 ? 'small' : 'normal'}
@@ -124,7 +127,10 @@ export default function GameZone() {
 
                 {/* Right 2 tiles */}
                 {rightTiles.map((tile, index) => (
-                  <div key={tile.id} className="z-5">
+                  <div
+                    key={tile.id}
+                    className="z-5 transition-all duration-500 ease-out"
+                  >
                     <DominoTile
                       tile={tile}
                       size={index === 0 ? 'small' : 'normal'}
@@ -140,7 +146,10 @@ export default function GameZone() {
                   index > 0 &&
                   index < visibleTiles.length - 1
                 return (
-                  <div key={tile.id} className="z-5">
+                  <div
+                    key={tile.id}
+                    className="z-5 transition-all duration-300 ease-out"
+                  >
                     <DominoTile
                       tile={tile}
                       size={isMiddle ? 'small' : 'normal'}
@@ -176,7 +185,7 @@ export default function GameZone() {
               </>
             )}
 
-            <div className="z-5">
+            <div className="z-5 transition-all duration-300 ease-out">
               <Droppable id={rightDroppableId.toString()}>
                 <DominoTile status="droppable" />
               </Droppable>
