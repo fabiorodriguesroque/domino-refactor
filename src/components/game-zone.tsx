@@ -14,6 +14,11 @@ export default function GameZone() {
 
   if (mainTiles.length === 0) return null
 
+  // Calculate droppable IDs based on main tiles
+  const mainTileIds = mainTiles.map((tile) => tile.id)
+  const leftDroppableId = Math.min(...mainTileIds) - 1
+  const rightDroppableId = Math.max(...mainTileIds) + 1
+
   const handleDragEnd = (event: DragEndEvent) => {
     console.log(event)
 
@@ -28,13 +33,13 @@ export default function GameZone() {
         <div className="flex flex-col items-center gap-16">
           {/* Main tiles with droppable zones on both sides */}
           <div className="flex items-center gap-4">
-            <Droppable id="droppable-left">
+            <Droppable id={leftDroppableId.toString()}>
               <DominoTile status="droppable" />
             </Droppable>
             {mainTiles.map((tile) => (
               <DominoTile key={tile.id} tile={tile} />
             ))}
-            <Droppable id="droppable-right">
+            <Droppable id={rightDroppableId.toString()}>
               <DominoTile status="droppable" />
             </Droppable>
           </div>
