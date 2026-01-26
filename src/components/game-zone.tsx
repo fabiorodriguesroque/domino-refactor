@@ -15,8 +15,23 @@ export default function GameZone() {
     useGameTiles(levelId)
 
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
+  const [hiddenTileIds, setHiddenTileIds] = useState<string[]>([])
 
   if (mainTiles.length === 0) return null
+
+  // Target tile is the one that matches the droppable IDs
+  const targetTileId = bottomTiles
+    .find((tile) => tile.id === leftDroppableId || tile.id === rightDroppableId)
+    ?.id.toString()
+
+  // Get visible distractor tiles (not target, not hidden, not the excluded tile)
+  const getVisibleDistractors = (excludeTileId?: string) =>
+    bottomTiles.filter(
+      (tile) =>
+        tile.id.toString() !== targetTileId &&
+        tile.id.toString() !== excludeTileId &&
+        !hiddenTileIds.includes(tile.id.toString()),
+    )
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over) {
@@ -33,9 +48,23 @@ export default function GameZone() {
     console.log('Correct')
   }
 
-  const handleIncorrectDragEnd = (tileId: string) => {
-    setShakingTileId(tileId)
-    setTimeout(() => setShakingTileId(null), 500)
+  const handleIncorrectDragEnd = (draggedTileId: string) => {
+    setShakingTileId(draggedTileId)
+
+    setTimeout(() => {
+      setShakingTileId(null)
+
+      // Find a distractor to hide (not the target, not already hidden, not the dragged tile)
+      const visibleDistractors = getVisibleDistractors(draggedTileId)
+      if (visibleDistractors.length > 0) {
+        // Pick a random visible distractor to hide
+        const randomIndex = Math.floor(
+          Math.random() * visibleDistractors.length,
+        )
+        const distractorToHide = visibleDistractors[randomIndex]!
+        setHiddenTileIds((prev) => [...prev, distractorToHide.id.toString()])
+      }
+    }, 500)
   }
 
   return (
@@ -57,14 +86,27 @@ export default function GameZone() {
 
           {/* 4 tiles below in a 2x2 grid */}
           <div className="grid grid-cols-2 gap-12">
-            {bottomTiles.map((tile) => (
-              <Draggable key={tile.id} id={tile.id.toString()}>
-                <DominoTile
-                  tile={tile}
-                  isShaking={shakingTileId === tile.id.toString()}
-                />
-              </Draggable>
-            ))}
+            {bottomTiles.map((tile) => {
+              const tileId = tile.id.toString()
+              const isHidden = hiddenTileIds.includes(tileId)
+
+              return (
+                <div
+                  key={tile.id}
+                  style={{
+                    visibility: isHidden ? 'hidden' : 'visible',
+                    pointerEvents: isHidden ? 'none' : 'auto',
+                  }}
+                >
+                  <Draggable id={tileId}>
+                    <DominoTile
+                      tile={tile}
+                      isShaking={shakingTileId === tileId}
+                    />
+                  </Draggable>
+                </div>
+              )
+            })}
           </div>
         </div>
       </DndContext>
