@@ -20,10 +20,13 @@ export default function GameZone() {
   const rightDroppableId = Math.max(...mainTileIds) + 1
 
   const handleDragEnd = (event: DragEndEvent) => {
-    console.log(event)
-
     if (event.over) {
-      console.log(event.over.id)
+      const isCorrect = event.active.id === event.over.id
+      if (isCorrect) {
+        console.log('Correct')
+      } else {
+        console.log('Incorrect')
+      }
     }
   }
 
