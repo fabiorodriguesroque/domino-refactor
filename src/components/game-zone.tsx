@@ -192,10 +192,10 @@ export default function GameZone() {
               return (
                 <div
                   key={tile.id}
-                  className={`transition-all duration-500 ease-out ${
+                  className={`${
                     isHidden
-                      ? 'pointer-events-none scale-90 opacity-0'
-                      : 'pointer-events-auto scale-100 opacity-100'
+                      ? 'pointer-events-none scale-90 opacity-0 transition-all duration-500 ease-out'
+                      : 'animate-pop-in pointer-events-auto'
                   }`}
                 >
                   <Draggable id={tileId}>
