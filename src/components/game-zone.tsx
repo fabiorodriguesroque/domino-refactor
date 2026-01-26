@@ -13,16 +13,18 @@ const BOTTOM_TILE_IDS = [12, 23, 8, 17]
 export default function GameZone() {
   const mainTile = getTileById(MAIN_TILE_ID)
   const bottomTiles = BOTTOM_TILE_IDS.map((id) => getTileById(id)).filter(
-    Boolean
+    Boolean,
   ) as Tile[]
 
   if (!mainTile) return null
 
   return (
     <div className="flex flex-col items-center gap-16">
-      {/* Main tile on top */}
-      <div className="flex justify-center">
+      {/* Main tile with droppable zones on both sides */}
+      <div className="flex items-center gap-4">
+        <DominoTile status="droppable" />
         <DominoTile tile={mainTile} />
+        <DominoTile status="droppable" />
       </div>
 
       {/* 4 tiles below in a 2x2 grid */}

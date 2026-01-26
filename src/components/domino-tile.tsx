@@ -2,6 +2,10 @@
 
 import { useAws } from '@repo/core/hooks'
 
+type DominoTileProps =
+  | { tile: Tile; status?: 'normal' }
+  | { tile?: Tile; status: 'droppable' }
+
 const ImageSide = ({ style }: { style: React.CSSProperties }) => (
   <div className="h-full flex-1" style={style} />
 )
@@ -16,9 +20,22 @@ const Separator = () => (
   <div className="my-3 w-[3px] self-stretch rounded-full bg-[#CAC9B3]" />
 )
 
-export default function DominoTile({ tile }: { tile: Tile }) {
+const DroppableTile = () => (
+  <div className="relative h-[80px] w-[200px]">
+    <div className="flex h-full w-full items-center justify-center rounded-2xl border-[3px] border-dashed border-[#9A9888] bg-[#FFFBF3]/30">
+      <div className="h-[60px] w-[2px] rounded-full bg-[#9A9888]/20" />
+    </div>
+  </div>
+)
+
+export default function DominoTile(props: DominoTileProps) {
   const { getPublicUrl } = useAws()
 
+  if (props.status === 'droppable') {
+    return <DroppableTile />
+  }
+
+  const { tile } = props
   const hasValue = Boolean(tile.value)
   const hasRightImage = !hasValue && Boolean(tile.rightImage)
 
