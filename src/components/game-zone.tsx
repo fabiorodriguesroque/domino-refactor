@@ -181,10 +181,11 @@ export default function GameZone() {
               return (
                 <div
                   key={tile.id}
-                  style={{
-                    visibility: isHidden ? 'hidden' : 'visible',
-                    pointerEvents: isHidden ? 'none' : 'auto',
-                  }}
+                  className={`transition-all duration-500 ease-out ${
+                    isHidden
+                      ? 'pointer-events-none scale-90 opacity-0'
+                      : 'pointer-events-auto scale-100 opacity-100'
+                  }`}
                 >
                   <Draggable id={tileId}>
                     <DominoTile
