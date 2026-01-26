@@ -3,37 +3,64 @@
 import clsx from 'clsx'
 import { useAws } from '@repo/core/hooks'
 
+type TileSize = 'normal' | 'small'
+
 type DominoTileProps =
-  | { tile: Tile; status?: 'normal'; isShaking?: boolean }
-  | { tile?: Tile; status: 'droppable'; isShaking?: never }
+  | { tile: Tile; status?: 'normal'; isShaking?: boolean; size?: TileSize }
+  | { tile?: Tile; status: 'droppable'; isShaking?: never; size?: TileSize }
+
+const sizeStyles = {
+  normal: {
+    container: 'h-[80px] w-[200px]',
+    text: 'text-xl',
+    separator: 'my-3 w-[3px]',
+    droppableLine: 'h-[60px] w-[2px]',
+  },
+  small: {
+    container: 'h-[50px] w-[125px]',
+    text: 'text-sm',
+    separator: 'my-2 w-[2px]',
+    droppableLine: 'h-[36px] w-[2px]',
+  },
+}
 
 const ImageSide = ({ style }: { style: React.CSSProperties }) => (
   <div className="h-full flex-1" style={style} />
 )
 
-const TextSide = ({ value }: { value: string }) => (
+const TextSide = ({ value, size = 'normal' }: { value: string; size?: TileSize }) => (
   <div className="flex flex-1 items-center justify-center">
-    <span className="text-xl font-semibold text-black">{value}</span>
+    <span className={clsx('font-semibold text-black', sizeStyles[size].text)}>
+      {value}
+    </span>
   </div>
 )
 
-const Separator = () => (
-  <div className="my-3 w-[3px] self-stretch rounded-full bg-[#CAC9B3]" />
+const Separator = ({ size = 'normal' }: { size?: TileSize }) => (
+  <div
+    className={clsx(
+      'self-stretch rounded-full bg-[#CAC9B3]',
+      sizeStyles[size].separator,
+    )}
+  />
 )
 
-const DroppableTile = () => (
-  <div className="relative h-[80px] w-[200px]">
+const DroppableTile = ({ size = 'normal' }: { size?: TileSize }) => (
+  <div className={clsx('relative', sizeStyles[size].container)}>
     <div className="flex h-full w-full items-center justify-center rounded-2xl border-[3px] border-dashed border-[#9A9888] bg-[#FFFBF3]/30">
-      <div className="h-[60px] w-[2px] rounded-full bg-[#9A9888]/20" />
+      <div
+        className={clsx('rounded-full bg-[#9A9888]/20', sizeStyles[size].droppableLine)}
+      />
     </div>
   </div>
 )
 
 export default function DominoTile(props: DominoTileProps) {
   const { getPublicUrl } = useAws()
+  const size = props.size ?? 'normal'
 
   if (props.status === 'droppable') {
-    return <DroppableTile />
+    return <DroppableTile size={size} />
   }
 
   const { tile, isShaking } = props
@@ -60,7 +87,8 @@ export default function DominoTile(props: DominoTileProps) {
   return (
     <div
       className={clsx(
-        'relative h-[80px] w-[200px]',
+        'relative',
+        sizeStyles[size].container,
         isShaking && 'animate-shake',
       )}
     >
@@ -71,10 +99,10 @@ export default function DominoTile(props: DominoTileProps) {
       <div className="relative flex h-full w-full items-stretch overflow-hidden rounded-2xl border-[3px] border-white bg-[#FFFBF3]">
         {/* Left side - always the main image */}
         <ImageSide style={leftImageStyle} />
-        <Separator />
+        <Separator size={size} />
         {/* Right side - text value or secondary image */}
         {hasValue ? (
-          <TextSide value={tile.value!} />
+          <TextSide value={tile.value!} size={size} />
         ) : hasRightImage ? (
           <ImageSide style={rightImageStyle} />
         ) : null}

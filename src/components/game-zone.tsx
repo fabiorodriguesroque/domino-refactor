@@ -58,9 +58,19 @@ export default function GameZone() {
             <Droppable id={leftDroppableId.toString()}>
               <DominoTile status="droppable" />
             </Droppable>
-            {mainTiles.map((tile) => (
-              <DominoTile key={tile.id} tile={tile} />
-            ))}
+            {mainTiles.map((tile, index) => {
+              const isMiddle =
+                mainTiles.length >= 4 &&
+                index > 0 &&
+                index < mainTiles.length - 1
+              return (
+                <DominoTile
+                  key={tile.id}
+                  tile={tile}
+                  size={isMiddle ? 'small' : 'normal'}
+                />
+              )
+            })}
             <Droppable id={rightDroppableId.toString()}>
               <DominoTile status="droppable" />
             </Droppable>
