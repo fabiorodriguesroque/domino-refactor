@@ -106,9 +106,47 @@ export function useGameTiles(levelId: number) {
     level: undefined,
   })
 
+  const [hiddenTileIds, setHiddenTileIds] = useState<string[]>([])
+
   useEffect(() => {
     setGameTiles(computeGameTiles(levelId))
+    setHiddenTileIds([])
   }, [levelId])
 
-  return gameTiles
+  const { mainTiles, bottomTiles, leftDroppableId, rightDroppableId, level } =
+    gameTiles
+
+  // Target tile is the one that matches the droppable IDs
+  const targetTileId = bottomTiles
+    .find((tile) => tile.id === leftDroppableId || tile.id === rightDroppableId)
+    ?.id.toString()
+
+  // Get visible distractor tiles (not target, not hidden, not the excluded tile)
+  const getVisibleDistractors = (excludeTileId?: string) =>
+    bottomTiles.filter(
+      (tile) =>
+        tile.id.toString() !== targetTileId &&
+        tile.id.toString() !== excludeTileId &&
+        !hiddenTileIds.includes(tile.id.toString()),
+    )
+
+  const hideRandomDistractor = (excludeTileId?: string) => {
+    const visibleDistractors = getVisibleDistractors(excludeTileId)
+    if (visibleDistractors.length > 0) {
+      const randomIndex = Math.floor(Math.random() * visibleDistractors.length)
+      const distractorToHide = visibleDistractors[randomIndex]!
+      setHiddenTileIds((prev) => [...prev, distractorToHide.id.toString()])
+    }
+  }
+
+  return {
+    mainTiles,
+    bottomTiles,
+    leftDroppableId,
+    rightDroppableId,
+    level,
+    hiddenTileIds,
+    getVisibleDistractors,
+    hideRandomDistractor,
+  }
 }

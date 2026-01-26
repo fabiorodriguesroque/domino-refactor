@@ -11,27 +11,18 @@ import { useGameTiles } from '../hooks/useGameTiles'
 export default function GameZone() {
   const params = useParams<{ level: string }>()
   const levelId = Number(params.level) || 1
-  const { mainTiles, bottomTiles, leftDroppableId, rightDroppableId } =
-    useGameTiles(levelId)
+  const {
+    mainTiles,
+    bottomTiles,
+    leftDroppableId,
+    rightDroppableId,
+    hiddenTileIds,
+    hideRandomDistractor,
+  } = useGameTiles(levelId)
 
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
-  const [hiddenTileIds, setHiddenTileIds] = useState<string[]>([])
 
   if (mainTiles.length === 0) return null
-
-  // Target tile is the one that matches the droppable IDs
-  const targetTileId = bottomTiles
-    .find((tile) => tile.id === leftDroppableId || tile.id === rightDroppableId)
-    ?.id.toString()
-
-  // Get visible distractor tiles (not target, not hidden, not the excluded tile)
-  const getVisibleDistractors = (excludeTileId?: string) =>
-    bottomTiles.filter(
-      (tile) =>
-        tile.id.toString() !== targetTileId &&
-        tile.id.toString() !== excludeTileId &&
-        !hiddenTileIds.includes(tile.id.toString()),
-    )
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over) {
@@ -53,17 +44,7 @@ export default function GameZone() {
 
     setTimeout(() => {
       setShakingTileId(null)
-
-      // Find a distractor to hide (not the target, not already hidden, not the dragged tile)
-      const visibleDistractors = getVisibleDistractors(draggedTileId)
-      if (visibleDistractors.length > 0) {
-        // Pick a random visible distractor to hide
-        const randomIndex = Math.floor(
-          Math.random() * visibleDistractors.length,
-        )
-        const distractorToHide = visibleDistractors[randomIndex]!
-        setHiddenTileIds((prev) => [...prev, distractorToHide.id.toString()])
-      }
+      hideRandomDistractor(draggedTileId)
     }, 500)
   }
 
