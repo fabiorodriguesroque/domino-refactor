@@ -10,14 +10,10 @@ import { useGameTiles } from '../hooks/useGameTiles'
 export default function GameZone() {
   const params = useParams<{ level: string }>()
   const levelId = Number(params.level) || 1
-  const { mainTiles, bottomTiles } = useGameTiles(levelId)
+  const { mainTiles, bottomTiles, leftDroppableId, rightDroppableId } =
+    useGameTiles(levelId)
 
   if (mainTiles.length === 0) return null
-
-  // Calculate droppable IDs based on main tiles
-  const mainTileIds = mainTiles.map((tile) => tile.id)
-  const leftDroppableId = Math.min(...mainTileIds) - 1
-  const rightDroppableId = Math.max(...mainTileIds) + 1
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over) {

@@ -9,13 +9,25 @@ function computeGameTiles(levelId: number) {
   const level = levels.find((l) => l.id === levelId)
 
   if (!level) {
-    return { mainTiles: [], bottomTiles: [], level: undefined }
+    return {
+      mainTiles: [],
+      bottomTiles: [],
+      leftDroppableId: 0,
+      rightDroppableId: 0,
+      level: undefined,
+    }
   }
 
   // Get the starter main tile for this level
   const starterMainTile = getTileById(level.mainTile)
   if (!starterMainTile) {
-    return { mainTiles: [], bottomTiles: [], level }
+    return {
+      mainTiles: [],
+      bottomTiles: [],
+      leftDroppableId: 0,
+      rightDroppableId: 0,
+      level,
+    }
   }
 
   // Calculate valid target tile IDs (mainTile ± 1 that exist in level tiles)
@@ -24,7 +36,13 @@ function computeGameTiles(levelId: number) {
   )
 
   if (possibleTargetIds.length === 0) {
-    return { mainTiles: [starterMainTile], bottomTiles: [], level }
+    return {
+      mainTiles: [starterMainTile],
+      bottomTiles: [],
+      leftDroppableId: level.mainTile - 1,
+      rightDroppableId: level.mainTile + 1,
+      level,
+    }
   }
 
   // Pick one random target from possible targets
@@ -33,7 +51,13 @@ function computeGameTiles(levelId: number) {
   const targetTile = getTileById(targetId)
 
   if (!targetTile) {
-    return { mainTiles: [starterMainTile], bottomTiles: [], level }
+    return {
+      mainTiles: [starterMainTile],
+      bottomTiles: [],
+      leftDroppableId: level.mainTile - 1,
+      rightDroppableId: level.mainTile + 1,
+      level,
+    }
   }
 
   // Get all tile IDs from other levels for distractors
@@ -51,9 +75,18 @@ function computeGameTiles(levelId: number) {
   // Combine target and distractors, then shuffle
   const bottomTiles = shuffle([targetTile, ...distractorTiles])
 
+  const mainTiles = [starterMainTile]
+
+  // Calculate droppable IDs based on main tiles
+  const mainTileIds = mainTiles.map((tile) => tile.id)
+  const leftDroppableId = Math.min(...mainTileIds) - 1
+  const rightDroppableId = Math.max(...mainTileIds) + 1
+
   return {
-    mainTiles: [starterMainTile],
+    mainTiles,
     bottomTiles,
+    leftDroppableId,
+    rightDroppableId,
     level,
   }
 }
@@ -62,10 +95,14 @@ export function useGameTiles(levelId: number) {
   const [gameTiles, setGameTiles] = useState<{
     mainTiles: Tile[]
     bottomTiles: Tile[]
+    leftDroppableId: number
+    rightDroppableId: number
     level: (typeof levels)[number] | undefined
   }>({
     mainTiles: [],
     bottomTiles: [],
+    leftDroppableId: 0,
+    rightDroppableId: 0,
     level: undefined,
   })
 
