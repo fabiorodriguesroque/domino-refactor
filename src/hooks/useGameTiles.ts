@@ -1,9 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { shuffle } from 'lodash'
 import { levels } from '../constants/levels'
 import tiles from '../constants/tiles'
 
 const getTileById = (id: number) => tiles.find((tile) => tile.id === id)
+
+function getDistractorTiles(levelId: number, excludeIds: number[]): Tile[] {
+  // Get all tile IDs from other levels for distractors
+  const otherLevelsTileIds = levels
+    .filter((l) => l.id !== levelId)
+    .flatMap((l) => [l.mainTile, ...l.tiles])
+    .filter((id) => !excludeIds.includes(id))
+
+  // Shuffle and pick 3 random distractors
+  const shuffledDistractorIds = shuffle(otherLevelsTileIds)
+  const distractorIds = shuffledDistractorIds.slice(0, 3)
+  return distractorIds.map((id) => getTileById(id)).filter(Boolean) as Tile[]
+}
 
 function computeGameTiles(levelId: number) {
   const level = levels.find((l) => l.id === levelId)
@@ -60,17 +73,7 @@ function computeGameTiles(levelId: number) {
     }
   }
 
-  // Get all tile IDs from other levels for distractors
-  const otherLevelsTileIds = levels
-    .filter((l) => l.id !== levelId)
-    .flatMap((l) => [l.mainTile, ...l.tiles])
-
-  // Shuffle and pick 3 random distractors
-  const shuffledDistractorIds = shuffle(otherLevelsTileIds)
-  const distractorIds = shuffledDistractorIds.slice(0, 3)
-  const distractorTiles = distractorIds
-    .map((id) => getTileById(id))
-    .filter(Boolean) as Tile[]
+  const distractorTiles = getDistractorTiles(levelId, [targetId])
 
   // Combine target and distractors, then shuffle
   const bottomTiles = shuffle([targetTile, ...distractorTiles])
@@ -139,6 +142,67 @@ export function useGameTiles(levelId: number) {
     }
   }
 
+  const addTileToMain = useCallback(
+    (tileId: number, droppableId: number) => {
+      if (!level) return
+
+      const tile = getTileById(tileId)
+      if (!tile) return
+
+      // Determine position: left if dropped on left droppable, right otherwise
+      const currentMainTileIds = mainTiles.map((t) => t.id)
+      const minId = Math.min(...currentMainTileIds)
+      const isLeftSide = droppableId < minId
+
+      // Add tile to mainTiles in correct position
+      const newMainTiles = isLeftSide
+        ? [tile, ...mainTiles]
+        : [...mainTiles, tile]
+
+      // Calculate new droppable IDs
+      const newMainTileIds = newMainTiles.map((t) => t.id)
+      const newLeftDroppableId = Math.min(...newMainTileIds) - 1
+      const newRightDroppableId = Math.max(...newMainTileIds) + 1
+
+      // Find valid target from level.tiles that matches new droppable IDs and isn't already in mainTiles
+      const possibleTargetIds = [
+        newLeftDroppableId,
+        newRightDroppableId,
+      ].filter((id) => level.tiles.includes(id) && !newMainTileIds.includes(id))
+
+      let newBottomTiles: Tile[] = []
+
+      if (possibleTargetIds.length > 0) {
+        // Pick a random target
+        const newTargetId =
+          possibleTargetIds[
+            Math.floor(Math.random() * possibleTargetIds.length)
+          ]!
+        const newTargetTile = getTileById(newTargetId)
+
+        if (newTargetTile) {
+          // Get 3 distractors
+          const distractorTiles = getDistractorTiles(levelId, [
+            ...newMainTileIds,
+            newTargetId,
+          ])
+          newBottomTiles = shuffle([newTargetTile, ...distractorTiles])
+        }
+      }
+
+      // Update state
+      setGameTiles({
+        mainTiles: newMainTiles,
+        bottomTiles: newBottomTiles,
+        leftDroppableId: newLeftDroppableId,
+        rightDroppableId: newRightDroppableId,
+        level,
+      })
+      setHiddenTileIds([])
+    },
+    [level, levelId, mainTiles],
+  )
+
   return {
     mainTiles,
     bottomTiles,
@@ -148,5 +212,6 @@ export function useGameTiles(levelId: number) {
     hiddenTileIds,
     getVisibleDistractors,
     hideRandomDistractor,
+    addTileToMain,
   }
 }

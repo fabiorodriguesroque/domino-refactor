@@ -18,6 +18,7 @@ export default function GameZone() {
     rightDroppableId,
     hiddenTileIds,
     hideRandomDistractor,
+    addTileToMain,
   } = useGameTiles(levelId)
 
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
@@ -28,15 +29,15 @@ export default function GameZone() {
     if (event.over) {
       const isCorrect = event.active.id === event.over.id
       if (isCorrect) {
-        handleCorrectDragEnd()
+        handleCorrectDragEnd(Number(event.active.id), Number(event.over.id))
       } else {
         handleIncorrectDragEnd(event.active.id.toString())
       }
     }
   }
 
-  const handleCorrectDragEnd = () => {
-    console.log('Correct')
+  const handleCorrectDragEnd = (tileId: number, droppableId: number) => {
+    addTileToMain(tileId, droppableId)
   }
 
   const handleIncorrectDragEnd = (draggedTileId: string) => {
