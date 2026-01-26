@@ -63,6 +63,7 @@ const tiles: Tile[] = [
     mirrorImage: true,
     backgroundImagePosition: 'right bottom',
   },
+  // Level 2
   {
     id: 10,
     src: images.tiles.lula,
@@ -123,6 +124,7 @@ const tiles: Tile[] = [
     mirrorImage: true,
     backgroundImagePosition: 'right bottom',
   },
+  // Level 3
   {
     id: 19,
     src: images.tiles.pelo,
@@ -181,6 +183,7 @@ const tiles: Tile[] = [
     mirrorImage: true,
     backgroundImagePosition: 'right bottom',
   },
+  // Level 4
   {
     id: 28,
     src: images.tiles.teia,
