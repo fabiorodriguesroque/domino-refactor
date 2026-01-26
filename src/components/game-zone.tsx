@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import DominoTile from './domino-tile'
 import Draggable from '@repo/core/components/Draggable'
@@ -27,6 +27,7 @@ export default function GameZone() {
     leftDroppableId,
     rightDroppableId,
     hiddenTileIds,
+    isLevelComplete,
     hideRandomDistractor,
     addTileToMain,
   } = useGameTiles(levelId)
@@ -35,6 +36,13 @@ export default function GameZone() {
 
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
   const [activeDragTile, setActiveDragTile] = useState<Tile | null>(null)
+
+  // Show alert when level is complete
+  useEffect(() => {
+    if (isLevelComplete) {
+      alert('You finished the level!')
+    }
+  }, [isLevelComplete])
 
   if (mainTiles.length === 0) return null
 

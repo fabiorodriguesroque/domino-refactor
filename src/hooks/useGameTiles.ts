@@ -203,6 +203,10 @@ export function useGameTiles(levelId: number) {
     [level, levelId, mainTiles],
   )
 
+  // Level is complete when all level tiles are in mainTiles (no more bottom tiles to place)
+  const isLevelComplete =
+    level !== undefined && mainTiles.length > 1 && bottomTiles.length === 0
+
   return {
     mainTiles,
     bottomTiles,
@@ -210,6 +214,7 @@ export function useGameTiles(levelId: number) {
     rightDroppableId,
     level,
     hiddenTileIds,
+    isLevelComplete,
     getVisibleDistractors,
     hideRandomDistractor,
     addTileToMain,
