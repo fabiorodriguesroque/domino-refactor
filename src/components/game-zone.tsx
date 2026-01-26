@@ -13,6 +13,7 @@ import {
 import Droppable from '@repo/core/components/Droppable'
 import { useParams } from 'next/navigation'
 import { useGameTiles } from '../hooks/useGameTiles'
+import { usePreloadImages } from '../hooks/usePreloadImages'
 import { images } from '../constants/images'
 import { useAws } from '@repo/core/hooks'
 
@@ -21,6 +22,7 @@ const MAX_VISIBLE_TILES = 4
 export default function GameZone() {
   const params = useParams<{ level: string }>()
   const levelId = Number(params.level) || 1
+  const { isLoading: isLoadingImages } = usePreloadImages()
   const {
     mainTiles,
     bottomTiles,
@@ -43,6 +45,15 @@ export default function GameZone() {
       alert('You finished the level!')
     }
   }, [isLevelComplete])
+
+  // Show loading state while images are preloading
+  if (isLoadingImages) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+      </div>
+    )
+  }
 
   if (mainTiles.length === 0) return null
 
