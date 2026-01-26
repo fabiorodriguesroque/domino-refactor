@@ -4,7 +4,12 @@ import { useState } from 'react'
 import Image from 'next/image'
 import DominoTile from './domino-tile'
 import Draggable from '@repo/core/components/Draggable'
-import { DndContext, DragEndEvent } from '@dnd-kit/core'
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from '@dnd-kit/core'
 import Droppable from '@repo/core/components/Droppable'
 import { useParams } from 'next/navigation'
 import { useGameTiles } from '../hooks/useGameTiles'
@@ -29,6 +34,7 @@ export default function GameZone() {
   const { getPublicUrl } = useAws()
 
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
+  const [activeDragTile, setActiveDragTile] = useState<Tile | null>(null)
 
   if (mainTiles.length === 0) return null
 
@@ -39,7 +45,13 @@ export default function GameZone() {
   const rightTiles = hasLoopEffect ? mainTiles.slice(-2) : []
   const visibleTiles = hasLoopEffect ? mainTiles : mainTiles
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const tile = bottomTiles.find((t) => t.id.toString() === event.active.id)
+    setActiveDragTile(tile || null)
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveDragTile(null)
     if (event.over) {
       const isCorrect = event.active.id === event.over.id
       if (isCorrect) {
@@ -65,7 +77,11 @@ export default function GameZone() {
 
   return (
     <div>
-      <DndContext onDragEnd={handleDragEnd} id="dnd-domino">
+      <DndContext
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        id="dnd-domino"
+      >
         <div className="flex flex-col items-center gap-16">
           {/* Main tiles with droppable zones on both sides */}
           <div className="relative flex items-center gap-4">
@@ -173,6 +189,15 @@ export default function GameZone() {
             })}
           </div>
         </div>
+
+        {/* Drag overlay - renders the dragged tile with shadow on top of everything */}
+        <DragOverlay dropAnimation={null} zIndex={50}>
+          {activeDragTile && (
+            <div className="drop-shadow-xl">
+              <DominoTile tile={activeDragTile} />
+            </div>
+          )}
+        </DragOverlay>
       </DndContext>
     </div>
   )
