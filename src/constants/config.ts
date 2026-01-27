@@ -1,3 +1,4 @@
 const MAX_VISIBLE_TILES = 4
+const MAX_STARS = 5
 
-export { MAX_VISIBLE_TILES }
+export { MAX_VISIBLE_TILES, MAX_STARS }

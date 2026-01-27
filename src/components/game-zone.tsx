@@ -19,6 +19,7 @@ import { useAws } from '@repo/core/hooks'
 import { getTileAnimationClass } from '../helpers/animations'
 import clsx from 'clsx'
 import { MAX_VISIBLE_TILES } from '../constants/config'
+import { useGameStore } from '../store/gameStore'
 
 export default function GameZone() {
   const params = useParams<{ level: string }>()
@@ -33,7 +34,10 @@ export default function GameZone() {
     isLevelComplete,
     hideRandomDistractor,
     addTileToMain,
+    level,
   } = useGameTiles(levelId)
+
+  const { livesPercentage, decreaseLife, resetGame } = useGameStore()
 
   const { getPublicUrl } = useAws()
 
@@ -50,6 +54,17 @@ export default function GameZone() {
       alert('You finished the level!')
     }
   }, [isLevelComplete])
+
+  // Show game over when lives reach 0
+  useEffect(() => {
+    if (livesPercentage === 0) {
+      const shouldReset = window.confirm('Game Over! Click OK to reset.')
+      if (shouldReset) {
+        resetGame()
+        window.location.reload()
+      }
+    }
+  }, [livesPercentage, resetGame])
 
   // Show loading state while images are preloading
   if (isLoadingImages) {
@@ -105,6 +120,12 @@ export default function GameZone() {
 
   const handleIncorrectDragEnd = (draggedTileId: string) => {
     setShakingTileId(draggedTileId)
+
+    // Decrease life based on total target tiles for this level
+    if (level) {
+      const totalTargetTiles = level.tiles.length
+      decreaseLife(totalTargetTiles)
+    }
 
     setTimeout(() => {
       setShakingTileId(null)
