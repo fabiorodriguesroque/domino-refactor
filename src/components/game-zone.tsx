@@ -37,7 +37,7 @@ export default function GameZone() {
     level,
   } = useGameTiles(levelId)
 
-  const { livesPercentage, decreaseLife, resetGame } = useGameStore()
+  const { livesPercentage, initLevel, recordCorrectAnswer, decreaseLife, setLevelComplete, resetGame } = useGameStore()
 
   const { getPublicUrl } = useAws()
 
@@ -48,12 +48,20 @@ export default function GameZone() {
     newTileId: number
   } | null>(null)
 
-  // Show alert when level is complete
+  // Initialize level in store when level changes
   useEffect(() => {
+    if (level) {
+      initLevel(level.tiles.length)
+    }
+  }, [level, initLevel])
+
+  // Update store when level is complete
+  useEffect(() => {
+    setLevelComplete(isLevelComplete)
     if (isLevelComplete) {
       alert('You finished the level!')
     }
-  }, [isLevelComplete])
+  }, [isLevelComplete, setLevelComplete])
 
   // Show game over when lives reach 0
   useEffect(() => {
@@ -110,6 +118,9 @@ export default function GameZone() {
       newTileId: tileId,
     })
 
+    // Record correct answer for stars calculation
+    recordCorrectAnswer()
+
     addTileToMain(tileId, droppableId)
 
     // Clear animation state after animation completes
@@ -122,10 +133,7 @@ export default function GameZone() {
     setShakingTileId(draggedTileId)
 
     // Decrease life based on total target tiles for this level
-    if (level) {
-      const totalTargetTiles = level.tiles.length
-      decreaseLife(totalTargetTiles)
-    }
+    decreaseLife()
 
     setTimeout(() => {
       setShakingTileId(null)

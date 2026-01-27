@@ -8,7 +8,7 @@ import { MAX_STARS } from '@repo/domino/constants/config'
 
 export default function GamePage() {
   const { getPublicUrl } = useAws()
-  const { stars, livesPercentage } = useGameStore()
+  const { livesPercentage, getStars } = useGameStore()
 
   return (
     <div className="font-poppins relative h-screen w-screen bg-[#9AD7CE]">
@@ -26,7 +26,7 @@ export default function GamePage() {
         <div className="fixed top-10 w-full">
           <div className="mx-auto max-w-3xl">
             <TopBar
-              stars={stars}
+              stars={getStars()}
               maxStars={MAX_STARS}
               livesPercentage={livesPercentage}
               onBack={() => {
