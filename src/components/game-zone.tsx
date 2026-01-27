@@ -20,6 +20,8 @@ import { getTileAnimationClass } from '../helpers/animations'
 import clsx from 'clsx'
 import { MAX_VISIBLE_TILES } from '../constants/config'
 import { useGameStore } from '../store/gameStore'
+import { useAudio } from '@repo/core/hooks'
+import { soundEffects } from '@repo/core/constants/sounds'
 
 export default function GameZone() {
   const params = useParams<{ level: string }>()
@@ -37,9 +39,17 @@ export default function GameZone() {
     level,
   } = useGameTiles(levelId)
 
-  const { livesPercentage, initLevel, recordCorrectAnswer, decreaseLife, setLevelComplete, resetGame } = useGameStore()
+  const {
+    livesPercentage,
+    initLevel,
+    recordCorrectAnswer,
+    decreaseLife,
+    setLevelComplete,
+    resetGame,
+  } = useGameStore()
 
   const { getPublicUrl } = useAws()
+  const { play } = useAudio()
 
   const [shakingTileId, setShakingTileId] = useState<string | null>(null)
   const [activeDragTile, setActiveDragTile] = useState<Tile | null>(null)
@@ -110,6 +120,7 @@ export default function GameZone() {
   }
 
   const handleCorrectDragEnd = (tileId: number, droppableId: number) => {
+    play(soundEffects.plim)
     // Determine direction based on droppable ID
     const isLeftSide = droppableId === leftDroppableId
 
@@ -130,6 +141,7 @@ export default function GameZone() {
   }
 
   const handleIncorrectDragEnd = (draggedTileId: string) => {
+    play(soundEffects.wrongAnswer)
     setShakingTileId(draggedTileId)
 
     // Decrease life based on total target tiles for this level
