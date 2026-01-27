@@ -113,7 +113,7 @@ export default function GameZone() {
   }
 
   return (
-    <div>
+    <div id="domino-game">
       <DndContext
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
@@ -182,23 +182,27 @@ export default function GameZone() {
               <>
                 {/* Back cloud (behind tiles) */}
                 <div className="pointer-events-none absolute top-1/2 left-1/2 z-0 -translate-x-1/2 -translate-y-1/2">
-                  <Image
-                    src={getPublicUrl(images.ui.cloudBack)}
-                    alt=""
-                    width={400}
-                    height={400}
-                    className="object-contain"
-                  />
+                  <div className="animate-cloud-float-delayed">
+                    <Image
+                      src={getPublicUrl(images.ui.cloudBack)}
+                      alt=""
+                      width={400}
+                      height={400}
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
                 {/* Front cloud (in front of tiles) */}
                 <div className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-                  <Image
-                    src={getPublicUrl(images.ui.cloudFront)}
-                    alt=""
-                    width={350}
-                    height={350}
-                    className="object-contain"
-                  />
+                  <div className="animate-cloud-float">
+                    <Image
+                      src={getPublicUrl(images.ui.cloudFront)}
+                      alt=""
+                      width={350}
+                      height={350}
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
               </>
             )}
