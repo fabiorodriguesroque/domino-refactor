@@ -5,8 +5,10 @@ import TopBar from '@repo/ui/components/games/top-bar'
 import GameZone from '@repo/domino/components/game-zone'
 import { useGameStore } from '@repo/domino/store/gameStore'
 import { MAX_STARS } from '@repo/domino/constants/config'
+import { useRouter } from 'next/navigation'
 
 export default function GamePage() {
+  const router = useRouter()
   const { getPublicUrl } = useAws()
   const { livesPercentage, getStars } = useGameStore()
 
@@ -29,9 +31,7 @@ export default function GamePage() {
               stars={getStars()}
               maxStars={MAX_STARS}
               livesPercentage={livesPercentage}
-              onBack={() => {
-                console.log('back')
-              }}
+              onBack={() => router.push('/domino')}
               onHelp={() => {
                 console.log('help')
               }}
