@@ -16,6 +16,7 @@ import { useGameTiles } from '../hooks/useGameTiles'
 import { usePreloadImages } from '../hooks/usePreloadImages'
 import { images } from '../constants/images'
 import { useAws } from '@repo/core/hooks'
+import { getTileAnimationClass } from '../helpers/animations'
 
 const MAX_VISIBLE_TILES = 4
 
@@ -42,7 +43,6 @@ export default function GameZone() {
     direction: 'left' | 'right'
     newTileId: number
   } | null>(null)
-  const [isDroppableVisible, setIsDroppableVisible] = useState(true)
 
   // Show alert when level is complete
   useEffect(() => {
@@ -69,33 +69,6 @@ export default function GameZone() {
   const rightTiles = hasLoopEffect ? mainTiles.slice(-2) : []
   const visibleTiles = hasLoopEffect ? mainTiles : mainTiles
 
-  // Get animation class for a tile based on push animation state
-  // When cloud is visible, only animate tiles on the side where the drop happened
-  const getTileAnimationClass = (
-    tileId: number,
-    side?: 'left' | 'right',
-  ): string => {
-    if (!pushAnimation) return ''
-
-    const isNewTile = tileId === pushAnimation.newTileId
-    const { direction } = pushAnimation
-
-    // When cloud is visible, only animate tiles on the dropped side
-    if (hasLoopEffect && side && side !== direction) {
-      return ''
-    }
-
-    if (isNewTile) {
-      // New tile slides in from the direction it was dropped
-      return direction === 'left'
-        ? 'animate-slide-in-left'
-        : 'animate-slide-in-right'
-    }
-
-    // Existing tiles get pushed in the opposite direction
-    return direction === 'left' ? 'animate-push-right' : 'animate-push-left'
-  }
-
   const handleDragStart = (event: DragStartEvent) => {
     const tile = bottomTiles.find((t) => t.id.toString() === event.active.id)
     setActiveDragTile(tile || null)
@@ -117,9 +90,6 @@ export default function GameZone() {
     // Determine direction based on droppable ID
     const isLeftSide = droppableId === leftDroppableId
 
-    // Hide droppables during animation
-    setIsDroppableVisible(false)
-
     setPushAnimation({
       direction: isLeftSide ? 'left' : 'right',
       newTileId: tileId,
@@ -127,10 +97,9 @@ export default function GameZone() {
 
     addTileToMain(tileId, droppableId)
 
-    // Clear animation state and show droppables after animation completes
+    // Clear animation state after animation completes
     setTimeout(() => {
       setPushAnimation(null)
-      setIsDroppableVisible(true)
     }, 400)
   }
 
@@ -165,7 +134,7 @@ export default function GameZone() {
                 {leftTiles.map((tile, index) => (
                   <div
                     key={tile.id}
-                    className={`z-5 ${getTileAnimationClass(tile.id, 'left')}`}
+                    className={`z-5 ${getTileAnimationClass(tile.id, pushAnimation, hasLoopEffect, 'left')}`}
                   >
                     <DominoTile
                       tile={tile}
@@ -178,7 +147,7 @@ export default function GameZone() {
                 {rightTiles.map((tile, index) => (
                   <div
                     key={tile.id}
-                    className={`z-5 ${getTileAnimationClass(tile.id, 'right')}`}
+                    className={`z-5 ${getTileAnimationClass(tile.id, pushAnimation, hasLoopEffect, 'right')}`}
                   >
                     <DominoTile
                       tile={tile}
@@ -197,7 +166,7 @@ export default function GameZone() {
                 return (
                   <div
                     key={tile.id}
-                    className={`z-5 ${getTileAnimationClass(tile.id)}`}
+                    className={`z-5 ${getTileAnimationClass(tile.id, pushAnimation, hasLoopEffect)}`}
                   >
                     <DominoTile
                       tile={tile}
