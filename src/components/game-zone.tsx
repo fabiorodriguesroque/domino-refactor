@@ -17,8 +17,8 @@ import { usePreloadImages } from '../hooks/usePreloadImages'
 import { images } from '../constants/images'
 import { useAws } from '@repo/core/hooks'
 import { getTileAnimationClass } from '../helpers/animations'
-
-const MAX_VISIBLE_TILES = 4
+import clsx from 'clsx'
+import { MAX_VISIBLE_TILES } from '../constants/config'
 
 export default function GameZone() {
   const params = useParams<{ level: string }>()
@@ -134,7 +134,15 @@ export default function GameZone() {
                 {leftTiles.map((tile, index) => (
                   <div
                     key={tile.id}
-                    className={`z-5 ${getTileAnimationClass(tile.id, pushAnimation, hasLoopEffect, 'left')}`}
+                    className={clsx(
+                      'z-5',
+                      getTileAnimationClass(
+                        tile.id,
+                        pushAnimation,
+                        hasLoopEffect,
+                        'left',
+                      ),
+                    )}
                   >
                     <DominoTile
                       tile={tile}
@@ -147,7 +155,15 @@ export default function GameZone() {
                 {rightTiles.map((tile, index) => (
                   <div
                     key={tile.id}
-                    className={`z-5 ${getTileAnimationClass(tile.id, pushAnimation, hasLoopEffect, 'right')}`}
+                    className={clsx(
+                      'z-5',
+                      getTileAnimationClass(
+                        tile.id,
+                        pushAnimation,
+                        hasLoopEffect,
+                        'right',
+                      ),
+                    )}
                   >
                     <DominoTile
                       tile={tile}
@@ -166,7 +182,14 @@ export default function GameZone() {
                 return (
                   <div
                     key={tile.id}
-                    className={`z-5 ${getTileAnimationClass(tile.id, pushAnimation, hasLoopEffect)}`}
+                    className={clsx(
+                      'z-5',
+                      getTileAnimationClass(
+                        tile.id,
+                        pushAnimation,
+                        hasLoopEffect,
+                      ),
+                    )}
                   >
                     <DominoTile
                       tile={tile}
@@ -223,11 +246,11 @@ export default function GameZone() {
               return (
                 <div
                   key={tile.id}
-                  className={`${
+                  className={clsx(
                     isHidden
                       ? 'pointer-events-none scale-90 opacity-0 transition-all duration-500 ease-out'
-                      : 'animate-pop-in pointer-events-auto'
-                  }`}
+                      : 'animate-pop-in pointer-events-auto',
+                  )}
                 >
                   <Draggable id={tileId}>
                     <DominoTile

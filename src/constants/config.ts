@@ -1,0 +1,3 @@
+const MAX_VISIBLE_TILES = 4
+
+export { MAX_VISIBLE_TILES }

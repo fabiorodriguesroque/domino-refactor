@@ -39,6 +39,7 @@
     },
     "dependencies": {
         "@tailwindcss/postcss": "^4.1.18",
+        "clsx": "^2.1.1",
         "lodash": "^4.17.23"
     }
 }
