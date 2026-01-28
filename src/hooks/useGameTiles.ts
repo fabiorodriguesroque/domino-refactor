@@ -133,8 +133,20 @@ export function useGameTiles(levelId: number) {
         !hiddenTileIds.includes(tile.id.toString()),
     )
 
-  const hideRandomDistractor = (excludeTileId?: string) => {
-    const visibleDistractors = getVisibleDistractors(excludeTileId)
+  /**
+   * Hide a distractor tile after a wrong drop.
+   * - If the dragged tile is a distractor → hide the dragged tile
+   * - If the dragged tile is the target (dropped on wrong side) → hide a random visible distractor
+   */
+  const hideDistractorTile = (tileId: string) => {
+    // If the dragged tile is not the target, hide it directly
+    if (tileId !== targetTileId) {
+      setHiddenTileIds((prev) => [...prev, tileId])
+      return
+    }
+
+    // Target tile was dropped on wrong side - hide a random visible distractor instead
+    const visibleDistractors = getVisibleDistractors()
     if (visibleDistractors.length > 0) {
       const randomIndex = Math.floor(Math.random() * visibleDistractors.length)
       const distractorToHide = visibleDistractors[randomIndex]!
@@ -216,7 +228,7 @@ export function useGameTiles(levelId: number) {
     hiddenTileIds,
     isLevelComplete,
     getVisibleDistractors,
-    hideRandomDistractor,
+    hideDistractorTile,
     addTileToMain,
   }
 }

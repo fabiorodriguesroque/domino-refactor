@@ -33,7 +33,7 @@ export default function GameZone() {
     rightDroppableId,
     hiddenTileIds,
     isLevelComplete,
-    hideRandomDistractor,
+    hideDistractorTile,
     addTileToMain,
     level,
   } = useGameTiles(levelId)
@@ -146,9 +146,11 @@ export default function GameZone() {
     // Decrease life based on total target tiles for this level
     decreaseLife()
 
+    // After shake animation completes (500ms), hide the dragged tile
+    // (only if it's not the target tile - user might have dropped it on wrong side)
     setTimeout(() => {
       setShakingTileId(null)
-      hideRandomDistractor(draggedTileId)
+      hideDistractorTile(draggedTileId)
     }, 500)
   }
 
