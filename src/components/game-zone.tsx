@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import DominoTile from './domino-tile'
 import Draggable from '@repo/core/components/Draggable'
 import {
@@ -247,7 +246,7 @@ export default function GameZone() {
                 {/* Back cloud (behind tiles) */}
                 <div className="pointer-events-none absolute top-1/2 left-1/2 z-0 -translate-x-1/2 -translate-y-1/2">
                   <div className="animate-cloud-float-delayed">
-                    <Image
+                    <img
                       src={getPublicUrl(images.ui.cloudBack)}
                       alt=""
                       width={400}
@@ -259,7 +258,7 @@ export default function GameZone() {
                 {/* Front cloud (in front of tiles) */}
                 <div className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
                   <div className="animate-cloud-float">
-                    <Image
+                    <img
                       src={getPublicUrl(images.ui.cloudFront)}
                       alt=""
                       width={350}
