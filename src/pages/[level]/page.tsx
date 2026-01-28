@@ -1,10 +1,10 @@
 'use client'
-import { images } from '@repo/domino/constants/images'
+import { images } from '../../constants/images'
 import { useAws } from '@repo/core/hooks'
 import TopBar from '@repo/ui/components/games/top-bar'
-import GameZone from '@repo/domino/components/game-zone'
-import { useGameStore } from '@repo/domino/store/gameStore'
-import { MAX_STARS } from '@repo/domino/constants/config'
+import GameZone from '../../components/game-zone'
+import { useGameStore } from '../../store/gameStore'
+import { MAX_STARS } from '../../constants/config'
 import { useRouter } from 'next/navigation'
 
 export default function GamePage() {
