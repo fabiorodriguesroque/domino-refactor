@@ -21,8 +21,6 @@
         "lint": "eslint src --max-warnings 0"
     },
     "peerDependencies": {
-        "@repo/core": "*",
-        "@repo/ui": "*",
         "next": "^16.0.1",
         "react": "^19",
         "react-dom": "^19"
@@ -32,12 +30,15 @@
         "@repo/tailwindcss-config": "*",
         "@repo/typescript-config": "*",
         "@tailwindcss/cli": "^4.1.5",
+        "@types/lodash": "^4.17.23",
         "@types/react": "^19.1.0",
         "eslint": "^9.38.0",
         "tailwindcss": "^4.1.5",
         "typescript": "5.9.2"
     },
     "dependencies": {
+        "@repo/core": "*",
+        "@repo/ui": "*",
         "@tailwindcss/postcss": "^4.1.18",
         "clsx": "^2.1.1",
         "lodash": "^4.17.23"
